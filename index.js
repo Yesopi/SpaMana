@@ -5,10 +5,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Estados simples en memoria (solo para pruebas, no persistentes)
+// Estados en memoria (solo pruebas, no persistente)
 let userState = {};
 
-// Mapas de planes para mostrar nombres en la confirmación
+// Mapas de planes
 const planesIndividuales = {
   "1": "Día de Spa – $300.000",
   "2": "Elixir de Chocolate – $250.000",
@@ -24,10 +24,16 @@ const planesGrupales = {
 };
 
 app.post("/whatsapp", (req, res) => {
-  const from = req.body.From; // número del cliente
+  const from = req.body.From;
   const msg = (req.body.Body || "").toLowerCase().trim();
 
   console.log(`📩 Mensaje recibido de ${from}: "${msg}"`);
+
+  // Reinicio si escribe "hola"
+  if (msg === "hola") {
+    userState[from] = { step: "start" };
+    console.log(`🔄 Usuario ${from} reinició la conversación con "hola"`);
+  }
 
   if (!userState[from]) {
     userState[from] = { step: "start" };
@@ -49,7 +55,7 @@ app.post("/whatsapp", (req, res) => {
       if (msg === "1") {
         twimlParts.push({
           text: "Has elegido Plan Individual ✅\n\nAquí tienes nuestro catálogo en PDF:",
-          media: "https://drive.google.com/uc?export=download&id=11J6hvr6Da8MYmb9mXT6tuktfxUndVTV6"
+          media: "https://drive.google.com/uc?export=download&id=11J6hvr6Da8MYmb9mXT6tuktfxUndVTV6",
         });
         response =
           "Elige tu plan individual:\n1️⃣ Día de Spa – $300.000\n2️⃣ Elixir de Chocolate – $250.000\n3️⃣ Soy Especial – $200.000\n4️⃣ Bendición – $120.000";
@@ -58,7 +64,7 @@ app.post("/whatsapp", (req, res) => {
       } else if (msg === "2") {
         twimlParts.push({
           text: "Has elegido Plan Grupal ✅\n\nAquí tienes nuestro catálogo en PDF:",
-          media: "https://drive.google.com/uc?export=download&id=1sdYBtLxdWijL0Re-30Gh9g_Mxy0hfNQY"
+          media: "https://drive.google.com/uc?export=download&id=1sdYBtLxdWijL0Re-30Gh9g_Mxy0hfNQY",
         });
         response =
           "Elige tu plan grupal:\n1️⃣ Relax – desde $260.000\n2️⃣ Junito – desde $290.000\n3️⃣ Verona – desde $350.000\n4️⃣ Todo o Nada – desde $440.000";
@@ -83,7 +89,6 @@ app.post("/whatsapp", (req, res) => {
         console.log(`🗓 Usuario ${from} eligió plan individual: ${userState[from].plan}`);
       } else {
         response = "Elige una opción válida (1 a 4).";
-        console.log(`⚠️ Usuario ${from} eligió opción inválida en chooseIndividual`);
       }
       break;
 
@@ -95,7 +100,6 @@ app.post("/whatsapp", (req, res) => {
         console.log(`🗓 Usuario ${from} eligió plan grupal: ${userState[from].plan}`);
       } else {
         response = "Elige una opción válida (1 a 4).";
-        console.log(`⚠️ Usuario ${from} eligió opción inválida en chooseGroup`);
       }
       break;
 
@@ -131,7 +135,7 @@ app.post("/whatsapp", (req, res) => {
       console.log(`♻️ Usuario ${from} reseteado al inicio.`);
   }
 
-  // Construimos TwiML
+  // Construcción de TwiML
   res.set("Content-Type", "text/xml");
   let twiml = "<Response>";
   if (twimlParts.length > 0) {
