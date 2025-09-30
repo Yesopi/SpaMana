@@ -54,14 +54,12 @@ app.post("/whatsapp", (req, res) => {
       if (msg === "1") {
         response =
           "Has elegido Plan Individual ✅\n\nAquí tienes nuestro catálogo en PDF. Luego elige tu plan:\n1️⃣ Día de Spa – $300.000\n2️⃣ Elixir de Chocolate – $250.000\n3️⃣ Soy Especial – $200.000\n4️⃣ Bendición – $120.000";
-        media =
-          "https://drive.google.com/uc?export=download&id=11J6hvr6Da8MYmb9mXT6tuktfxUndVTV6";
+        media = "https://spa-bot-mkoy.onrender.com/catalogo-individual.pdf";
         userState[from].step = "chooseIndividual";
       } else if (msg === "2") {
         response =
           "Has elegido Plan Grupal ✅\n\nAquí tienes nuestro catálogo en PDF. Luego elige tu plan:\n1️⃣ Relax – desde $260.000\n2️⃣ Junito – desde $290.000\n3️⃣ Verona – desde $350.000\n4️⃣ Todo o Nada – desde $440.000";
-        media =
-          "https://drive.google.com/uc?export=download&id=1sdYBtLxdWijL0Re-30Gh9g_Mxy0hfNQY";
+        media = "https://spa-bot-mkoy.onrender.com/catalogo-grupal.pdf";
         userState[from].step = "chooseGroup";
       } else if (msg === "3") {
         response = "Un asesor te contactará pronto 💬";
