@@ -1,12 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
-const path = require("path");
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Servir archivos estáticos desde /public
 app.use(express.static(path.join(__dirname, "public")));
-app.use(bodyParser.urlencoded({ extended: false }));
 
 // Estados en memoria (solo pruebas, no persistente)
 let userState = {};
